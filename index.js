@@ -2,8 +2,29 @@ const express = require("express");
 const handlebars = require("express-handlebars");
 const Sequelize = require("sequelize");
 const bodyParser = require("body-parser");
+const { type } = require("os");
 
 const app = express();
+const sequelize = new Sequelize("node", "root", "Jv,40028922", {
+    host: "localhost",
+    dialect: "mysql"
+});
+
+const Usuario = sequelize.define("usuarios", {
+    nome: {
+        type: Sequelize.STRING
+    }, 
+    email: {
+        type: Sequelize.STRING
+    }
+});
+
+//Usuario.sync({force: true});
+
+/*Usuario.create({
+    nome: "João Victor Silva Farias", 
+email: "joaovictor@gmail.com"
+})*/
 
 app.engine("handlebars", handlebars.engine({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
