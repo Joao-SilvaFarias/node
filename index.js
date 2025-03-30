@@ -1,39 +1,19 @@
 const express = require("express");
 const handlebars = require("express-handlebars");
-const Sequelize = require("sequelize");
 const bodyParser = require("body-parser");
 const { type } = require("os");
+const Usuario = require("./models/Usuario");
 
 const app = express();
-const sequelize = new Sequelize("node", "root", "Jv,40028922", {
-    host: "localhost",
-    dialect: "mysql"
-});
 
-const Usuario = sequelize.define("usuarios", {
-    nome: {
-        type: Sequelize.STRING
-    }, 
-    email: {
-        type: Sequelize.STRING
-    }
-});
-
-//Usuario.sync({force: true});
-
-/*Usuario.create({
-    nome: "João Victor Silva Farias", 
-email: "joaovictor@gmail.com"
-})*/
-
-app.engine("handlebars", handlebars.engine({defaultLayout: "main"}));
+app.engine("handlebars", handlebars.engine({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-    res.send("Página principal");
+        res.render("home");
 });
 
 app.get("/formulario", (req, res) => {
@@ -41,9 +21,15 @@ app.get("/formulario", (req, res) => {
 })
 
 app.post("/form", (req, res) => {
-    res.send(`Nome: ${req.body.nome}<br>E-mail: ${req.body.email}`);
+    Usuario.create({
+        nome: req.body.nome,
+        email: req.body.email
+    }).then(() => {
+        res.redirect("/");
+    }).catch((erro) => {
+        res.send(`Erro: ${erro}`);
+    });
 });
-
 app.listen(8081, () => {
     console.log("<h1>Servidor rodando na url http://localhost:8081</h1>");
 });
